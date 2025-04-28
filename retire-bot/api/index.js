@@ -1,5 +1,4 @@
 const express = require('express');
-const { json } = require('body-parser');
 const line = require('@line/bot-sdk');
 
 const config = {
@@ -7,16 +6,21 @@ const config = {
   channelSecret: process.env.CHANNEL_SECRET,
 };
 
-const client = new line.Client(config);
 const app = express();
 
-app.use(json());
-
-app.post('/api/webhook', line.middleware(config), (req, res) => {
-  Promise.all(req.body.events.map(handleEvent))
-    .then(result => res.json(result));
+// ここを追加！！（ブラウザからアクセスされたとき用）
+app.get('/', (req, res) => {
+  res.send('こんにちは！退職アシストBotです👋');
 });
 
+// LINE Webhook受け取り
+app.post('/webhook', line.middleware(config), (req, res) => {
+  Promise
+    .all(req.body.events.map(handleEvent))
+    .then((result) => res.json(result));
+});
+
+// メッセージ処理
 function handleEvent(event) {
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null);
@@ -24,8 +28,12 @@ function handleEvent(event) {
 
   return client.replyMessage(event.replyToken, {
     type: 'text',
-    text: 'こんにちは！退職アシストBotです🤖',
+    text: 'こんにちは！退職アシストBotです👋'
   });
 }
 
+// LINE Client設定
+const client = new line.Client(config);
+
+// 必ずこの行を書く（Vercel用）
 module.exports = app;
