@@ -1,7 +1,9 @@
 {
+  "name": "retire-bot",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "private": true,
   "dependencies": {
-    "@line/bot-sdk": "^9.9.0",
-    "express": "^5.1.0",
-    "serverless-http": "^3.2.0"
+    "@line/bot-sdk": "^9.0.0"
   }
 }
